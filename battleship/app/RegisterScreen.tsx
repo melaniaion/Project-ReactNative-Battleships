@@ -1,13 +1,46 @@
-import React from "react";
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from "react-native";
+import React, { useState } from "react";
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from "react-native";
+import { registerUser } from "./BattleshipAPI";
 
 const RegisterScreen = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleRegister = async () => {
+    if (!email || !password) {
+      Alert.alert("Error", "All fileds are required!");
+      return;
+    }
+
+    try {
+      const data = await registerUser(email, password);
+      Alert.alert("Success", "User registered with success!");
+
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Sorry, failed to register!");
+      console.error(error);
+    }
+  };
+
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Register</Text>
-      <TextInput style={styles.input} placeholder="Username" placeholderTextColor="#b19cd9" />
-      <TextInput style={styles.input} placeholder="Password" placeholderTextColor="#b19cd9" secureTextEntry />
-      <TouchableOpacity style={styles.button} onPress={() => alert('Register clicked')}>
+      <TextInput
+        style={styles.input}
+        placeholder="Email"
+        placeholderTextColor="#b19cd9"
+        value={email}
+        onChangeText={setEmail}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Password"
+        placeholderTextColor="#b19cd9"
+        secureTextEntry
+        value={password}
+        onChangeText={setPassword}
+      />
+      <TouchableOpacity style={styles.button} onPress={handleRegister}>
         <Text style={styles.buttonText}>Register</Text>
       </TouchableOpacity>
     </View>
