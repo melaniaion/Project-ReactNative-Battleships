@@ -17,6 +17,12 @@ const HomeScreen: React.FC<HomeScreenProps> = ({ navigation }) => {
         >
           <Text style={styles.buttonText}>Go to Register</Text>
         </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.button, { marginTop: 20 }]} 
+          onPress={() => navigation.navigate("Login")}
+        >
+          <Text style={styles.buttonText}>Go to Login</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -38,7 +44,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     color: "#ff69b4", // Pink color
     textAlign: "center",
-    marginBottom: 50, // Move the title up
+    marginBottom: 50, 
   },
   button: {
     backgroundColor: "#ff69b4", // Pink color
