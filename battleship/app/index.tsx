@@ -7,6 +7,8 @@ import HomeScreen from "./HomeScreen";
 import RegisterScreen from "./RegisterScreen";
 import LoginScreen from "./LoginScreen";
 import UserDetailsScreen from "./UserDetailsScreen";
+import LobbyScreen from "./LobbyScreen";
+import AllGamesScreen from "./AllGamesScreen";
 
 const Stack = createStackNavigator();
 
@@ -26,6 +28,8 @@ export default function Index() {
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name = "Login" component={LoginScreen} />
       <Stack.Screen name="UserDetails" component={UserDetailsScreen}/>
+      <Stack.Screen name="Lobby" component={LobbyScreen}/>
+      <Stack.Screen name="AllGames" component={AllGamesScreen} />
     </Stack.Navigator>
   );
 }
