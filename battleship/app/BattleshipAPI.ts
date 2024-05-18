@@ -115,3 +115,77 @@ export const getAllGames = async (): Promise<any> => {
     throw allGamesError;
   }
 };
+
+export const getGameDetails = async (gameId: string): Promise<any> => {
+  const token = await AsyncStorage.getItem("accessToken");
+  if (!token) {
+    throw new Error("No access token found");
+  }
+
+  const response = await fetch(`http://163.172.177.98:8081/game/${gameId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch game details");
+  }
+
+  return await response.json();
+};
+
+export const joinGame = async (gameId: string): Promise<any> => {
+  try {
+    const token = await AsyncStorage.getItem("accessToken");
+    if (!token) {
+      throw new Error("No access token found");
+    }
+
+    const response = await fetch(`http://163.172.177.98:8081/game/join/${gameId}`, {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to join game");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("joinGame error:", error);
+    throw error;
+  }
+};
+
+export const createGame = async (): Promise<any> => {
+  const token = await AsyncStorage.getItem("accessToken");
+  if (!token) {
+    throw new Error("No access token found");
+  }
+
+  try {
+    const response = await fetch(`${API_URL}/game`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Failed to create game");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("createGame error:", error);
+    throw error;
+  }
+};
