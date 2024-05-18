@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert, Dimensions } from "react-native";
-import { getAllGames } from "./BattleshipAPI"; 
+import { getAllGames } from "./BattleshipAPI";
 
 const { width } = Dimensions.get("window");
 
@@ -10,7 +10,7 @@ const AllGamesScreen = () => {
   const fetchGames = async () => {
     try {
       const data = await getAllGames();
-      setGames(data.games); 
+      setGames(data.games);
     } catch (error: any) {
       Alert.alert("Error", error.message || "Failed to fetch games");
       console.error("fetchGames error:", error);
@@ -23,16 +23,22 @@ const AllGamesScreen = () => {
 
   const renderItem = ({ item }: { item: any }) => (
     <View style={styles.card}>
-      <Text style={styles.cardText}>Game ID: {item.id}</Text>
-      <Text style={styles.cardText}>Status: {item.status}</Text>
-      <Text style={styles.cardText}>Player1: {item.player1.email}</Text>
-      <Text style={styles.cardText}>Player2: {item.player2.email}</Text>
-      <TouchableOpacity style={styles.joinButton} onPress={() => { /* to do */ }}>
-        <Text style={styles.buttonText}>Join Game</Text>
-      </TouchableOpacity>
-      <TouchableOpacity style={styles.detailsButton} onPress={() => { /* to do */ }}>
-        <Text style={styles.buttonText}>Game Details</Text>
-      </TouchableOpacity>
+      <View style={styles.cardHeader}>
+        <Text style={styles.cardTitle}>Game {item.id}</Text>
+        <Text style={styles.cardStatus}>{item.status}</Text>
+      </View>
+      <View style={styles.cardBody}>
+        <Text style={styles.cardText}>Player 1: {item.player1?.email}</Text>
+        <Text style={styles.cardText}>Player 2: {item.player2?.email}</Text>
+      </View>
+      <View style={styles.cardFooter}>
+        <TouchableOpacity style={styles.joinButton} onPress={() => { /* to do */ }}>
+          <Text style={styles.buttonText}>Join Game</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.detailsButton} onPress={() => { /* to do*/ }}>
+          <Text style={styles.buttonText}>Game Details</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 
@@ -43,9 +49,8 @@ const AllGamesScreen = () => {
         data={games}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
-        numColumns={2} 
-        columnWrapperStyle={styles.row} 
         ListEmptyComponent={<Text style={styles.emptyText}>No games available</Text>}
+        contentContainerStyle={styles.listContent}
       />
     </View>
   );
@@ -57,7 +62,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     padding: 16,
-    backgroundColor: "#fce4ec", // Light pink background color 
+    backgroundColor: "#fce4ec", // Light pink background color
   },
   title: {
     fontSize: 30,
@@ -69,40 +74,61 @@ const styles = StyleSheet.create({
   card: {
     backgroundColor: "#fff",
     padding: 20,
-    borderRadius: 10,
+    borderRadius: 15,
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0.2,
     shadowRadius: 5,
-    elevation: 3,
+    elevation: 5,
     marginBottom: 15,
-    width: (width / 2) - 30, // Adjust width for two columns, maye it will work now yeeeeey
-    margin: 10,
+    width: width - 40, 
     alignItems: "center",
+  },
+  cardHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginBottom: 10,
+  },
+  cardTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    color: "#ff69b4", // Pink color
+  },
+  cardStatus: {
+    fontSize: 14,
+    color: "#888",
+  },
+  cardBody: {
+    width: "100%",
+    marginBottom: 10,
   },
   cardText: {
     fontSize: 16,
     color: "#333",
-    marginBottom: 10,
+  },
+  cardFooter: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
   },
   joinButton: {
     backgroundColor: "#ff69b4", // Pink color
     padding: 10,
     borderRadius: 20,
     alignItems: "center",
-    width: "100%",
-    marginBottom: 10,
+    width: "48%",
   },
   detailsButton: {
     backgroundColor: "#ff69b4", // Pink color
     padding: 10,
     borderRadius: 20,
     alignItems: "center",
-    width: "100%",
+    width: "48%",
   },
   buttonText: {
     color: "#fff",
-    fontSize: 18,
+    fontSize: 16,
     fontWeight: "bold",
   },
   emptyText: {
@@ -110,9 +136,8 @@ const styles = StyleSheet.create({
     color: "#ff69b4", // Pink color
     textAlign: "center",
   },
-  row: {
-    flex: 1,
-    justifyContent: "space-around",
+  listContent: {
+    paddingBottom: 20,
   },
 });
 
