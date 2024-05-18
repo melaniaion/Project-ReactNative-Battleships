@@ -17,7 +17,7 @@ const LoginScreen = () => {
     try {
       await loginUser(email, password);
       Alert.alert("Success", "User logged in successfully");
-      navigation.navigate("UserDetails"); 
+      navigation.navigate("UserProfile"); 
     } catch (error: any) {
       Alert.alert("Error", error.message || "Failed to login");
       console.error(error);

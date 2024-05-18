@@ -33,7 +33,7 @@ const UserDetailsScreen: React.FC<UserDetailsScreenProps> = ({ navigation }) => 
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>User Details</Text>
+      <Text style={styles.title}>Your Profile</Text>
       {userDetails ? (
         <View style={styles.cardContainer}>
           <View style={styles.card}>

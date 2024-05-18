@@ -27,7 +27,7 @@ export default function Index() {
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="Register" component={RegisterScreen} />
       <Stack.Screen name = "Login" component={LoginScreen} />
-      <Stack.Screen name="UserDetails" component={UserDetailsScreen}/>
+      <Stack.Screen name="UserProfile" component={UserDetailsScreen}/>
       <Stack.Screen name="Lobby" component={LobbyScreen}/>
       <Stack.Screen name="AllGames" component={AllGamesScreen} />
     </Stack.Navigator>
