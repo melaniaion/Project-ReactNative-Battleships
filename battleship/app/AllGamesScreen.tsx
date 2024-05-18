@@ -1,52 +1,110 @@
 import React, { useState, useEffect } from "react";
 import { View, Text, FlatList, TouchableOpacity, StyleSheet, Alert, Dimensions } from "react-native";
-import { getAllGames } from "./BattleshipAPI";
+import { NavigationProp, ParamListBase, useNavigation } from "@react-navigation/native";
+import { getAllGames, getUserDetails } from "./BattleshipAPI";
 
 const { width } = Dimensions.get("window");
 
 const AllGamesScreen = () => {
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
+  const [email, setEmail] = useState<string>("");
   const [games, setGames] = useState<any[]>([]);
+  const [filteredGames, setFilteredGames] = useState<any[]>([]);
+  const [filter, setFilter] = useState<string>("All Games");
 
   const fetchGames = async () => {
     try {
       const data = await getAllGames();
       setGames(data.games);
+      setFilteredGames(data.games); // Initialize with all games
     } catch (error: any) {
       Alert.alert("Error", error.message || "Failed to fetch games");
       console.error("fetchGames error:", error);
     }
   };
 
+  const fetchUserDetails = async () => {
+    try {
+      const userDetails = await getUserDetails();
+      setEmail(userDetails.email);
+    } catch (error: any) {
+      Alert.alert("Error", error.message || "Failed to fetch user details");
+      console.error("fetchUserDetails error:", error);
+    }
+  };
+
   useEffect(() => {
+    fetchUserDetails();
     fetchGames();
   }, []);
+
+  useEffect(() => {
+    switch (filter) {
+      case "All Games":
+        setFilteredGames(games);
+        break;
+      case "Available Games":
+        setFilteredGames(games.filter(game => !game.player2));
+        break;
+      case "My Games":
+        setFilteredGames(games.filter(game => game.player1?.email === email || game.player2?.email === email));
+        break;
+    }
+  }, [filter, games, email]);
 
   const renderItem = ({ item }: { item: any }) => (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
         <Text style={styles.cardTitle}>Game {item.id}</Text>
-        <Text style={styles.cardStatus}>{item.status}</Text>
       </View>
       <View style={styles.cardBody}>
+        <Text style={styles.cardStatus}>Status: {item.status}</Text>
         <Text style={styles.cardText}>Player 1: {item.player1?.email}</Text>
         <Text style={styles.cardText}>Player 2: {item.player2?.email}</Text>
       </View>
       <View style={styles.cardFooter}>
-        <TouchableOpacity style={styles.joinButton} onPress={() => { /* to do */ }}>
+        <TouchableOpacity
+          style={styles.joinButton}
+          onPress={() => navigation.navigate("JoinGame", { gameId: item.id })}
+        >
           <Text style={styles.buttonText}>Join Game</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.detailsButton} onPress={() => { /* to do*/ }}>
+        <TouchableOpacity
+          style={styles.detailsButton}
+          onPress={() => navigation.navigate("GameDetails", { gameId: item.id })}
+        >
           <Text style={styles.buttonText}>Game Details</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
+  
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Available Games</Text>
+      <Text style={styles.title}>Battleship Games</Text>
+      <View style={styles.filterContainer}>
+        <TouchableOpacity
+          style={[styles.filterButton, filter === "All Games" && styles.activeFilterButton]}
+          onPress={() => setFilter("All Games")}
+        >
+          <Text style={styles.filterButtonText}>All Games</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.filterButton, filter === "Available Games" && styles.activeFilterButton]}
+          onPress={() => setFilter("Available Games")}
+        >
+          <Text style={styles.filterButtonText}>Available Games</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.filterButton, filter === "My Games" && styles.activeFilterButton]}
+          onPress={() => setFilter("My Games")}
+        >
+          <Text style={styles.filterButtonText}>My Games</Text>
+        </TouchableOpacity>
+      </View>
       <FlatList
-        data={games}
+        data={filteredGames}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         ListEmptyComponent={<Text style={styles.emptyText}>No games available</Text>}
@@ -70,6 +128,28 @@ const styles = StyleSheet.create({
     color: "#ff69b4", // Pink color
     textAlign: "center",
     marginBottom: 20,
+  },
+  filterContainer: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width: "100%",
+    marginBottom: 20,
+  },
+  filterButton: {
+    flex: 1,
+    padding: 10,
+    backgroundColor: "#ff69b4",
+    borderRadius: 20,
+    marginHorizontal: 5,
+    alignItems: "center",
+  },
+  activeFilterButton: {
+    backgroundColor: "#ff1493", // Darker pink for active filter
+  },
+  filterButtonText: {
+    color: "#fff",
+    fontSize: 16,
+    fontWeight: "bold",
   },
   card: {
     backgroundColor: "#fff",
