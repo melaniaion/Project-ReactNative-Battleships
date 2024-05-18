@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { View, Text, StyleSheet, Alert } from "react-native";
+import { View, Text, StyleSheet, Alert, TouchableOpacity } from "react-native";
 import { getUserDetails } from "./BattleshipAPI";
+import { NavigationProp, ParamListBase } from "@react-navigation/native";
 
 interface UserDetails {
   email: string;
@@ -10,7 +11,11 @@ interface UserDetails {
   gamesWon: number;
 }
 
-const UserDetailsScreen = () => {
+interface UserDetailsScreenProps {
+  navigation: NavigationProp<ParamListBase>;
+}
+
+const UserDetailsScreen: React.FC<UserDetailsScreenProps> = ({ navigation }) => {
   const [userDetails, setUserDetails] = useState<UserDetails | null>(null);
 
   useEffect(() => {
@@ -55,6 +60,12 @@ const UserDetailsScreen = () => {
       ) : (
         <Text style={styles.detailsText}>Loading user details...</Text>
       )}
+      <TouchableOpacity
+        style={styles.lobbyButton}
+        onPress={() => navigation.navigate("Lobby")}
+      >
+        <Text style={styles.buttonText}>Check the Lobby</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -102,6 +113,19 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: "#ff69b4", // Pink color for text
     marginBottom: 10,
+  },
+  lobbyButton: {
+    backgroundColor: "#ff69b4", // Pink color
+    padding: 15,
+    borderRadius: 30,
+    alignItems: "center",
+    marginTop: 20,
+    width: "60%",
+  },
+  buttonText: {
+    color: "#fff",
+    fontSize: 18,
+    fontWeight: "bold",
   },
 });
 
