@@ -84,7 +84,34 @@ export const getUserDetails = async (): Promise<{
         gamesPlayed: data.gamesPlayed,
         gamesWon: data.gamesWon,
       };
-    } catch (error) {
-      throw error;
+    } catch (userDetailsError) {
+      throw userDetailsError;
     }
+};
+
+export const getAllGames = async (): Promise<any> => {
+  try {
+    const token = await AsyncStorage.getItem("accessToken");
+      if (!token) {
+        throw new Error("No access token found");
+      }
+
+    const response = await fetch(`${API_URL}/game`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch games");
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (allGamesError) {
+    console.error("getAllGames error:", allGamesError);
+    throw allGamesError;
+  }
 };
